@@ -58,12 +58,6 @@ _BH1750_CONV_TIME_L = const(24)  # Worst case conversion timing low res
 _BH1750_CONV_TIME_H = const(180)  # Worst case conversion timing high res
 
 
-# Instructions
-_BH1750_POWER_DOWN = const(0x00)  # Power down instruction
-_BH1750_POWER_ON = const(0x01)  # Power on instruction
-_BH1750_RESET = const(0x07)  # Reset instruction
-
-
 class CV:
     """struct helper"""
 
@@ -193,7 +187,7 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
         with self.i2c_device as i2c:
             i2c.readinto(self._buffer)
 
-        return unpack_from(">B", self._buffer)[0]
+        return unpack_from(">H", self._buffer)[0]
 
     @property
     def lux(self):
@@ -217,9 +211,12 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
 
         """
         raw_lux = self._raw_reading
-        # // Convert raw value to LUX
-        lux = ((raw_lux * 10) + 5) / 12
-        return lux
+
+        return self._convert_to_lux(raw_lux)
+
+    @staticmethod
+    def _convert_to_lux(raw_lux):
+        return ((raw_lux * 10) + 5) / 12
 
     def _write(self, cmd_byte):
         self._buffer[0] = cmd_byte
