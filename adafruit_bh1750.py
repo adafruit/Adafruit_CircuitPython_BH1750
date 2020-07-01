@@ -24,7 +24,6 @@ Implementation Notes
   https://github.com/adafruit/circuitpython/releases
 
  * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
- * Adafruit's Register library: https://github.com/adafruit/Adafruit_CircuitPython_Register
 """
 
 # imports
@@ -152,7 +151,8 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
 
 
         :param ~busio.I2C i2c_bus: The I2C bus the BH1750 is connected to.
-        :param address: The I2C slave address of the sensor
+        :param address: The I2C slave address of the sensor. Defaults to ``0x23``. \
+        Can be set to ``0x5C`` by pulling the address pin high.
 
     """
 
@@ -168,7 +168,7 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
         self.initialize()
 
     def initialize(self):
-        """Configure the sensors with the default settings. For use after calling `reset()`"""
+        """Configure the sensors with the default settings."""
         self.mode = Mode.CONTINUOUS  # pylint:disable=no-member
         self.resolution = Resolution.HIGH  # pylint:disable=no-member
 
