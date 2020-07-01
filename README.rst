@@ -17,7 +17,7 @@ Introduction
     :target: https://github.com/psf/black
     :alt: Code Style: Black
 
-CircuitPython library for use with the Adafruit BH1750 breakout
+CircuitPython library for use with the Adafruit BH1750 Ambient Light Sensor Breakout
 
 
 Dependencies
