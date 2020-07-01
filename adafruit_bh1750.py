@@ -32,6 +32,7 @@ Implementation Notes
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_BH1750.git"
 
+from time import sleep
 from struct import unpack_from
 from micropython import const
 import adafruit_bus_device.i2c_device as i2c_device
@@ -86,16 +87,15 @@ class CV:
 
 class RWBitfields:
     """
-    Multibit register (less than a full byte) that is readable and writeable.
-    This must be within a byte register.
+    A class to do bitwise operations to get and set a range of bits within a byte but
+    gets and sets the full byte value from the ``_settings`` attribute of the calling
+    object.
 
-    Values are `int` between 0 and 2 ** ``num_bits`` - 1.
+    Values are `int` between 0 and ``2**num_bits - 1``
 
     :param int num_bits: The number of bits in the field.
-    :param int register_address: The register address to read the bit from
     :param type lowest_bit: The lowest bits index within the byte at ``register_address``
-    :param int register_width: The number of bytes in the register. Defaults to 1.
-    :param bool lsb_first: Is the first byte we read from I2C the LSB? Defaults to true
+
     """
 
     def __init__(self, num_bits, lowest_bit):
@@ -140,9 +140,9 @@ class Resolution(CV):
 
 Resolution.add_values(
     (
-        ("LOW", 3, "Low", None),  # 4 lx resolution
-        ("MID", 0, "Mid", None),  # 1 lx resolution
-        ("HIGH", 1, "High", None),  # 0.5 lx resolution
+        ("LOW", 3, "Low", None),  # 4 lx resolution "L-Resolution Mode" in DS
+        ("MID", 0, "Mid", None),  # 1 lx resolution "H-Resolution Mode" in DS
+        ("HIGH", 1, "High", None),  # 0.5 lx resolution, "H-Resolution Mode2" in DS
     )
 )
 
@@ -170,6 +170,7 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
     def initialize(self):
         """Configure the sensors with the default settings. For use after calling `reset()`"""
         self.mode = Mode.CONTINUOUS  # pylint:disable=no-member
+        self.resolution = Resolution.HIGH  # pylint:disable=no-member
 
     @property
     def _settings(self):
@@ -179,6 +180,7 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
     def _settings(self, value):
         self._settings_byte = value
         self._write(self._settings_byte)
+        sleep(0.180)  # worse case time to take a new measurement
 
     @property
     def _raw_reading(self):
@@ -216,9 +218,11 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
 
         return self._convert_to_lux(raw_lux)
 
-    @staticmethod
-    def _convert_to_lux(raw_lux):
-        return ((raw_lux * 10) + 5) / 12
+    def _convert_to_lux(self, raw_lux):
+        measured_lux = raw_lux / 1.2
+        if self.resolution == Resolution.HIGH:  # pylint:disable=no-member
+            measured_lux = measured_lux / 2
+        return measured_lux
 
     def _write(self, cmd_byte):
         self._buffer[0] = cmd_byte
