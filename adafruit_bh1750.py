@@ -37,7 +37,6 @@ from micropython import const
 import adafruit_bus_device.i2c_device as i2c_device
 
 
-# pylint: disable=bad-whitespace
 _BH1750_DEVICE_ID = 0xE1  # Correct content of WHO_AM_I register
 
 # I2C addresses (without R/W bit)
