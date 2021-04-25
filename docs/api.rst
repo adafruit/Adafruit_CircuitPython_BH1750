@@ -6,3 +6,4 @@
 
 .. automodule:: adafruit_bh1750
    :members:
+   :exclude-members: CV, Resolution, Mode, RWBitfields

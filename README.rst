@@ -60,15 +60,13 @@ To install in a virtual environment in your current project:
 Usage Example
 =============
 
-.. code-block:: python
+.. code-block:: python3
 
     import time
     import board
-    import busio
     import adafruit_bh1750
 
-    i2c = busio.I2C(board.SCL, board.SDA)
-
+    i2c = board.I2C()
     sensor = adafruit_bh1750.BH1750(i2c)
 
     while True:

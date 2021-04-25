@@ -23,8 +23,12 @@ Table of Contents
 .. toctree::
     :caption: Tutorials
 
+    Adafruit BH1750 Light Sensor Breakout Learning Guide <https://learn.adafruit.com/adafruit-bh1750-ambient-light-sensor>
+
 .. toctree::
     :caption: Related Products
+
+    Adafruit BH1750 Light Sensor Breakout <https://www.adafruit.com/products/4681>
 
 .. toctree::
     :caption: Other Links
