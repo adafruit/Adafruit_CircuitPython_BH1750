@@ -16,14 +16,15 @@ Implementation Notes
 
 **Hardware:**
 
-* `Adafruit BH1750 Breakout <https://www.adafruit.com/products/46XX>`_
+* Adafruit `BH1750 Light Sensor
+  <https://www.adafruit.com/product/4681>`_ (Product ID: 4681)
 
 **Software and Dependencies:**
 
 * Adafruit CircuitPython firmware for the supported boards:
-  https://github.com/adafruit/circuitpython/releases
+  https://circuitpython.org/downloads
 
- * Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
+* Adafruit's Bus Device library: https://github.com/adafruit/Adafruit_CircuitPython_BusDevice
 """
 
 # imports
@@ -89,7 +90,7 @@ class RWBitfields:
     gets and sets the full byte value from the ``_settings`` attribute of the calling
     object.
 
-    Values are `int` between 0 and ``2**num_bits - 1``
+    Values are `int` between 0 and :math:`2^num_bits - 1`
 
     :param int num_bits: The number of bits in the field.
     :param type lowest_bit: The lowest bits index within the byte at ``register_address``
@@ -148,10 +149,33 @@ Resolution.add_values(
 class BH1750:  # pylint:disable=too-many-instance-attributes
     """Library for the BH1750 Sensor
 
+    :param ~busio.I2C i2c_bus: The I2C bus the BH1750 is connected to.
+    :param int address: The I2C device address. Defaults to :const:`0x23`.Can be
+                        set to :const:`0x5C` by pulling the address pin high.
 
-        :param ~busio.I2C i2c_bus: The I2C bus the BH1750 is connected to.
-        :param address: The I2C slave address of the sensor. Defaults to ``0x23``. \
-        Can be set to ``0x5C`` by pulling the address pin high.
+
+    **Quickstart: Importing and using the BH1750**
+
+        Here is an example of using the :class:`BH1750` class.
+        First you will need to import the libraries to use the sensor
+
+        .. code-block:: python
+
+            import board
+            import adafruit_bh1750
+
+        Once this is done you can define your `board.I2C` object and define your sensor object
+
+        .. code-block:: python
+
+            i2c = board.I2C()  # uses board.SCL and board.SDA
+            sensor = adafruit_bh1750.BH1750(i2c)
+
+        Now you have access to the :attr:`lux` value in lux
+
+        .. code-block:: python
+
+            lux = sensor.lux
 
     """
 
@@ -194,25 +218,7 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
 
     @property
     def lux(self):
-        """Light value in lux.
-
-        This example prints the light data in lux. Cover the sensor to see the values change.
-
-        .. code-block:: python
-
-            import time
-            import board
-            import busio
-            import adafruit_bh1750
-
-            i2c = busio.I2C(board.SCL, board.SDA)
-            sensor = adafruit_bh1750.BH1750(i2c)
-
-            while True:
-                print("Lux:", sensor.lux)
-                time.sleep(0.1)
-
-        """
+        """Light value in lux."""
         raw_lux = self._raw_reading
 
         return self._convert_to_lux(raw_lux)
