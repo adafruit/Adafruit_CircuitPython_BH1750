@@ -149,7 +149,7 @@ Resolution.add_values(
 class BH1750:  # pylint:disable=too-many-instance-attributes
     """Library for the BH1750 Sensor
 
-    :param ~busio.I2C i2c_bus: The I2C bus the BH1750 is connected to.
+    :param ~busio.I2C i2c: The I2C bus the BH1750 is connected to.
     :param int address: The I2C device address. Defaults to :const:`0x23`.Can be
                         set to :const:`0x5C` by pulling the address pin high.
 
@@ -182,9 +182,9 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
     mode = RWBitfields(2, 4)
     resolution = RWBitfields(2, 0)
 
-    def __init__(self, i2c_bus, address=_BH1750_DEFAULT_ADDRESS):
+    def __init__(self, i2c, address=_BH1750_DEFAULT_ADDRESS):
 
-        self.i2c_device = i2c_device.I2CDevice(i2c_bus, address)
+        self.i2c_device = i2c_device.I2CDevice(i2c, address)
         self._buffer = bytearray(2)
         self._settings_byte = 0
 
