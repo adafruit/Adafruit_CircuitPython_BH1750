@@ -37,6 +37,11 @@ from struct import unpack_from
 from micropython import const
 from adafruit_bus_device import i2c_device
 
+try:
+    from typing import Optional, List, Tuple, Type
+    from busio import I2C
+except ImportError:
+    pass
 
 _BH1750_DEVICE_ID = 0xE1  # Correct content of WHO_AM_I register
 
@@ -67,7 +72,9 @@ class CV:
     """struct helper"""
 
     @classmethod
-    def add_values(cls, value_tuples):
+    def add_values(
+        cls, value_tuples: List[Tuple[str, int, str, Optional[int]]]
+    ) -> None:
         """Add CV values to the class"""
         cls.string = {}
         cls.lsb = {}
@@ -79,7 +86,7 @@ class CV:
             cls.lsb[value] = lsb
 
     @classmethod
-    def is_valid(cls, value):
+    def is_valid(cls, value: int) -> bool:
         """Validate that a given value is a member"""
         return value in cls.string
 
@@ -97,15 +104,15 @@ class RWBitfields:
 
     """
 
-    def __init__(self, num_bits, lowest_bit):
+    def __init__(self, num_bits: int, lowest_bit: int) -> None:
         self._bit_mask = ((1 << num_bits) - 1) << lowest_bit
         self._lowest_bit = lowest_bit
 
-    def __get__(self, obj, objtype=None):
+    def __get__(self, obj: Optional["BH1750"], objtype: Type["BH1750"]) -> int:
 
         return (obj._settings & self._bit_mask) >> self._lowest_bit
 
-    def __set__(self, obj, value):
+    def __set__(self, obj: "BH1750", value: int) -> None:
         # shift the value over to the right spot
         value <<= self._lowest_bit
         settings = obj._settings
@@ -182,7 +189,7 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
     mode = RWBitfields(2, 4)
     resolution = RWBitfields(2, 0)
 
-    def __init__(self, i2c, address=_BH1750_DEFAULT_ADDRESS):
+    def __init__(self, i2c: I2C, address: int = _BH1750_DEFAULT_ADDRESS) -> None:
 
         self.i2c_device = i2c_device.I2CDevice(i2c, address)
         self._buffer = bytearray(2)
@@ -190,23 +197,23 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
 
         self.initialize()
 
-    def initialize(self):
+    def initialize(self) -> None:
         """Configure the sensors with the default settings."""
         self.mode = Mode.CONTINUOUS  # pylint:disable=no-member
         self.resolution = Resolution.HIGH  # pylint:disable=no-member
 
     @property
-    def _settings(self):
+    def _settings(self) -> int:
         return self._settings_byte
 
     @_settings.setter
-    def _settings(self, value):
+    def _settings(self, value: int) -> None:
         self._settings_byte = value
         self._write(self._settings_byte)
         sleep(0.180)  # worse case time to take a new measurement
 
     @property
-    def _raw_reading(self):
+    def _raw_reading(self) -> int:
 
         self._buffer[0] = 0
         self._buffer[1] = 0
@@ -217,19 +224,19 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
         return unpack_from(">H", self._buffer)[0]
 
     @property
-    def lux(self):
+    def lux(self) -> float:
         """Light value in lux."""
         raw_lux = self._raw_reading
 
         return self._convert_to_lux(raw_lux)
 
-    def _convert_to_lux(self, raw_lux):
+    def _convert_to_lux(self, raw_lux: int) -> float:
         measured_lux = raw_lux / 1.2
         if self.resolution == Resolution.HIGH:  # pylint:disable=no-member
             measured_lux = measured_lux / 2
         return measured_lux
 
-    def _write(self, cmd_byte):
+    def _write(self, cmd_byte: int) -> None:
         self._buffer[0] = cmd_byte
         with self.i2c_device as i2c:
             i2c.write(self._buffer, end=1)
