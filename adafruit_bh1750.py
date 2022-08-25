@@ -38,7 +38,7 @@ from micropython import const
 from adafruit_bus_device import i2c_device
 
 try:
-    from typing import Optional, List, Tuple
+    from typing import Optional, List, Tuple, Type
     from busio import I2C
 except ImportError:
     pass
@@ -86,7 +86,7 @@ class CV:
             cls.lsb[value] = lsb
 
     @classmethod
-    def is_valid(cls, value: str) -> bool:
+    def is_valid(cls, value: int) -> bool:
         """Validate that a given value is a member"""
         return value in cls.string
 
@@ -108,11 +108,11 @@ class RWBitfields:
         self._bit_mask = ((1 << num_bits) - 1) << lowest_bit
         self._lowest_bit = lowest_bit
 
-    def __get__(self, obj: object, objtype: Optional[type] = None) -> int:
+    def __get__(self, obj: Optional["BH1750"], objtype: Type["BH1750"]) -> int:
 
         return (obj._settings & self._bit_mask) >> self._lowest_bit
 
-    def __set__(self, obj: object, value: int) -> None:
+    def __set__(self, obj: "BH1750", value: int) -> None:
         # shift the value over to the right spot
         value <<= self._lowest_bit
         settings = obj._settings
@@ -213,7 +213,7 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
         sleep(0.180)  # worse case time to take a new measurement
 
     @property
-    def _raw_reading(self) -> bytearray:
+    def _raw_reading(self) -> int:
 
         self._buffer[0] = 0
         self._buffer[1] = 0
