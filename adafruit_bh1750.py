@@ -109,7 +109,6 @@ class RWBitfields:
         self._lowest_bit = lowest_bit
 
     def __get__(self, obj: Optional["BH1750"], objtype: Type["BH1750"]) -> int:
-
         return (obj._settings & self._bit_mask) >> self._lowest_bit
 
     def __set__(self, obj: "BH1750", value: int) -> None:
@@ -190,7 +189,6 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
     resolution = RWBitfields(2, 0)
 
     def __init__(self, i2c: I2C, address: int = _BH1750_DEFAULT_ADDRESS) -> None:
-
         self.i2c_device = i2c_device.I2CDevice(i2c, address)
         self._buffer = bytearray(2)
         self._settings_byte = 0
@@ -214,7 +212,6 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
 
     @property
     def _raw_reading(self) -> int:
-
         self._buffer[0] = 0
         self._buffer[1] = 0
 
