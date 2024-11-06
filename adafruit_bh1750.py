@@ -123,7 +123,7 @@ class RWBitfields:
 
 
 class Mode(CV):
-    """Options for ``mode``"""
+    """Options for `mode`. Valid values are ``SHUTDOWN``, ``CONTINUOUS``, and ``ONE_SHOT``"""
 
     pass  # pylint: disable=unnecessary-pass
 
@@ -138,7 +138,7 @@ Mode.add_values(
 
 
 class Resolution(CV):
-    """Options for ``resolution``"""
+    """Options for `resolution` Valid values are ``LOW``, ``MID``, and ``HIGH`` """
 
     pass  # pylint: disable=unnecessary-pass
 
@@ -186,7 +186,11 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
     """
 
     mode = RWBitfields(2, 4)
+    """The capture mode for the sensor. See `Mode` for valid values."""
+
     resolution = RWBitfields(2, 0)
+    """The resolution of the sensor. See `Resolution` for valid values."""
+    """"""
 
     def __init__(self, i2c: I2C, address: int = _BH1750_DEFAULT_ADDRESS) -> None:
         self.i2c_device = i2c_device.I2CDevice(i2c, address)
