@@ -138,7 +138,7 @@ Mode.add_values(
 
 
 class Resolution(CV):
-    """Options for `resolution` Valid values are ``LOW``, ``MID``, and ``HIGH`` """
+    """Options for `resolution` Valid values are ``LOW``, ``MID``, and ``HIGH``"""
 
     pass  # pylint: disable=unnecessary-pass
 
