@@ -32,13 +32,15 @@ Implementation Notes
 __version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_BH1750.git"
 
-from time import sleep
 from struct import unpack_from
-from micropython import const
+from time import sleep
+
 from adafruit_bus_device import i2c_device
+from micropython import const
 
 try:
-    from typing import Optional, List, Tuple, Type
+    from typing import List, Optional, Tuple, Type
+
     from busio import I2C
 except ImportError:
     pass
@@ -72,9 +74,7 @@ class CV:
     """struct helper"""
 
     @classmethod
-    def add_values(
-        cls, value_tuples: List[Tuple[str, int, str, Optional[int]]]
-    ) -> None:
+    def add_values(cls, value_tuples: List[Tuple[str, int, str, Optional[int]]]) -> None:
         """Add CV values to the class"""
         cls.string = {}
         cls.lsb = {}
@@ -125,7 +125,7 @@ class RWBitfields:
 class Mode(CV):
     """Options for `mode`. Valid values are ``SHUTDOWN``, ``CONTINUOUS``, and ``ONE_SHOT``"""
 
-    pass  # pylint: disable=unnecessary-pass
+    pass
 
 
 Mode.add_values(
@@ -140,7 +140,7 @@ Mode.add_values(
 class Resolution(CV):
     """Options for `resolution` Valid values are ``LOW``, ``MID``, and ``HIGH``"""
 
-    pass  # pylint: disable=unnecessary-pass
+    pass
 
 
 Resolution.add_values(
