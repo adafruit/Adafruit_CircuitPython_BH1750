@@ -12,5 +12,5 @@ i2c = board.I2C()  # uses board.SCL and board.SDA
 sensor = adafruit_bh1750.BH1750(i2c)
 
 while True:
-    print("%.2f Lux" % sensor.lux)
+    print(f"{sensor.lux:.2f} Lux")
     time.sleep(1)

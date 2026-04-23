@@ -234,7 +234,7 @@ class BH1750:  # pylint:disable=too-many-instance-attributes
     def _convert_to_lux(self, raw_lux: int) -> float:
         measured_lux = raw_lux / 1.2
         if self.resolution == Resolution.HIGH:  # pylint:disable=no-member
-            measured_lux = measured_lux / 2
+            measured_lux /= 2
         return measured_lux
 
     def _write(self, cmd_byte: int) -> None:
